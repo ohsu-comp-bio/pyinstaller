@@ -221,7 +221,6 @@ pyi_main(int argc, char * argv[])
         }
         VS("LOADER: created temporary directory: %s\n", archive_status->temppath);
     }
-
 #if defined(_WIN32) || defined(__APPLE__)
 
     /* On Windows and Mac use single-process for --onedir mode. */
@@ -392,10 +391,11 @@ pyi_main(int argc, char * argv[])
 #endif
 
         /* Main code to initialize Python and run user's code. */
+
         pyi_launch_initialize(archive_status);
+        printf("Initializing...\n");
         rc = pyi_launch_execute(archive_status);
         pyi_launch_finalize(archive_status);
-
         /* Clean up splash screen resources; required when in single-process
          * execution mode, i.e. when using --onedir on Windows or macOS. */
         pyi_splash_finalize(splash_status);
