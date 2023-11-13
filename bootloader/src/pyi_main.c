@@ -45,6 +45,7 @@
 #include "pyi_win32_utils.h"
 #include "pyi_splash.h"
 #include "pyi_apple_events.h"
+#include "file_count.h"
 
 
 /* Console hiding/minimization options. Windows only. */
@@ -220,6 +221,13 @@ pyi_main(int argc, char * argv[])
             return -1;
         }
         VS("LOADER: created temporary directory: %s\n", archive_status->temppath);
+        int count = countFiles(archive_status->temppath);
+        VS("Number of existing files in temporary directory: %d\n", count);
+        // If only one temp dir is found then we can assume that we're in the parent process
+        // and should output the "Initializing ..." message
+        if (count == 1) {
+            printf("Initializing ...\n");
+        }
     }
 #if defined(_WIN32) || defined(__APPLE__)
 
@@ -393,7 +401,6 @@ pyi_main(int argc, char * argv[])
         /* Main code to initialize Python and run user's code. */
 
         pyi_launch_initialize(archive_status);
-        printf("Initializing...\n");
         rc = pyi_launch_execute(archive_status);
         pyi_launch_finalize(archive_status);
         /* Clean up splash screen resources; required when in single-process
